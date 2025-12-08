@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style-mistura.css">
+    <title>Jeca Maracatu</title>
+
+    <link rel="icon" href="img/jeca-logo.png">
+</head>
+<body>
+    <div id="game">
+        <header>
+            <div class="log">
+            <h2 id="placeholderbotaocozinha">🐊</h2>
+            <h1>JecaMaracatu</h1>
+            </div>
+        <nav>
+        <button>⚙️</button>
+        <button>🛒</button>
+        <button>📒</button>
+        <button>👤</button>
+        </nav>
+        </header>
+    </div>
+
+    <main>
+
+        <img id="cursor" src="img/Cursor.png">
+        <img id="cursor-segurando" src="img/Cursor segurando.png">
+
+        <container id="container">
+        <!-- colisão -->
+        <div class="mesa-guardar" id="mesa1-guardar">
+            <img id="mesa1" src="img-cenario/Mesa.png">
+            <!-- <div id="mesa1-cliente"></div> -->
+        </div>
+
+        <div class="mesa-guardar" id="mesa2-guardar">
+            <img id="mesa2" src="img-cenario/Mesa.png">
+            <!-- <div id="mesa2-cliente"></div> -->
+        </div>
+
+        <div class="mesa-guardar" id="mesa3-guardar">
+            <img id="mesa3" src="img-cenario/Mesa.png">
+            <!-- <div id="mesa3-cliente"></div> -->
+        </div>
+
+        <!-- <img id="QUADRADO" draggable="true"> -->
+        <div id="parede"></div>
+        <div id="parede2"></div>
+        <div id="chao"></div>
+
+
+        <img id="janela" src="img-cenario/Janela.gif">
+
+        </container>
+
+        <div id="cozinha">
+            <div id="score-display" style="position: absolute; z-index: 9999999999999999;">Misture</div>
+            <!-- <div id="barravazia"><div id="barracheia"></div></div> -->
+
+
+
+            <img id="espatula" src="img-cozinha/Espatula.png">
+
+            <!-- Ingredientes do brigadeiro -->
+            <img id="leitecon" src="img-ingrediente/Leite condensado.png" draggable="true">
+            <img id="chocolate" src="img-ingrediente/Achocolatado.png" draggable="true">
+            <img id="chocolateColher" src="img-ingrediente/Achocolatado-colher.png" draggable="true">
+            <img id="manteiga" src="img-ingrediente/Manteiga.png" draggable="true">
+            <img id="manteigaColher" src="img-ingrediente/Manteiga-colher.png" draggable="true">
+
+            <img id="manteigapanela" src="img-ingrediente/Manteiga na panela.png">
+            <img id="chocolatepanela" src="img-ingrediente/Chocolate em pó na panela.png">
+            <img id="leiteconpanela" src="img-ingrediente/Leite condensado visto de cima.png">
+            <div id="brigadeiromistura"></div>
+            
+            <img id="panela" src="img-cozinha/Panela vista de cima.png">
+            <div id="panela-fundo"></div>
+            <div id="panela-area"></div>
+
+            <img id="good" src="img/good.png">
+            <img id="great" src="img/great.png">
+            <img id="awesome" src="img/awesome.png">
+            <img src="img-cenario/cozinha.png" style="z-index: -999" alt="fundo" class="fundo">
+
+            <!-- *** INÍCIO: conteúdo do BODY do index-mistura-p23.html inserido aqui (SEM ALTERAÇÕES) *** -->
+            <main>
+
+                <img id="brigadeiro" style="position: absolute; display: none; height: 20%; top: -70px;" 
+                     src="img-ingrediente/Brigadeiro-granulado.png">
+
+                <img id="pacote" src="img-ingrediente/Pacote-granulado.png" style="display:none;">
+                <img id="tigela" src="img-cozinha/Tigela.png"style="display:none;">
+
+            </main>
+
+            <!-- Barra de progresso -->
+            <div id="granBarContainer">
+                <div id="granBar"></div>
+            </div>
+
+            <div id="hud">
+                <div id="scoreBrigadeiro">Brigadeiro score: 0</div>
+                <div id="scoreGranulado">Granulado score: 0</div>
+            </div>
+            <!-- *** FIM: conteúdo do BODY do index-mistura-p23.html *** -->
+
+        </div>
+
+
+        <!-- game area -->
+        <div id="game-area">
+
+            <img src="img/Jeca-paradoR.gif" id="player" class="player" alt="Player">
+
+            <img src="img-cenario/fundo.png" alt="fundo" class="fundo">
+        </div>
+            
+    </main>
+
+        <script>
+
+            // PEGANDO OS ELEMENTOS PARA SEREM USADOS NO JS
+            // ---------------------------------------------
+
+            // Tela inicial
+            const mesa = document.getElementById('mesa1');
+            const main = document.querySelector('main');
+            const gameArea = document.getElementById('game-area');
+            const parede2 = document.getElementById('parede2');
+            const container = document.getElementById('container');
+
+            const cursor = document.getElementById('cursor');
+            const cursorhold = document.getElementById('cursor-segurando');
+            const botaocozinha = document.getElementById('placeholderbotaocozinha');
+
+
+            // ÁUDIOS
+            // Música de fundo            
+            const background = new Audio('audio/popstar.m4a')
+
+            // Efeitos para começo e fim de tarefas
+            const start = new Audio('audio/started.m4a');
+            const finish = new Audio('audio/completed.m4a')
+            const finish2 = new Audio('audio/completed2.mp3');
+            const finish3 = new Audio('audio/focus.m4a');
+            const finish4 = new Audio('audio/flower.m4a');
+
+        // Efeitos para realização de ações
+            const task1 = new Audio('audio/step1.m4a');
+            const task2 = new Audio('audio/step2.m4a');
+            const task3 = new Audio('audio/step3.m4a');
+            const task4 = new Audio('audio/step4.m4a');
+
+            // Efeito para obtenção de dinheiro
+            const cash = new Audio('audio/money.m4a');
+
+            // Jogador (Jeca)
+            const player = document.getElementById('player');
+
+
+            // COZINHA
+            let kitchenopen = false;
+            const kitchen = document.getElementById('cozinha');
+            
+            // Mistura
+            const espatula = document.getElementById('espatula');
+            const panela = document.getElementById('panela');
+            const panelaFundo = document.getElementById('panela-fundo');
+            const panelaArea = document.getElementById('panela-area');
+            const barra = document.getElementById('barracheia');
+            const manteiga = document.getElementById('manteiga');
+            const manteigaColher = document.getElementById('manteigaColher');
+            const chocolate = document.getElementById('chocolate');
+            const chocolateColher = document.getElementById('chocolateColher');
+            const leitecon = document.getElementById('leitecon');
+            const brigadeiromistura = document.getElementById('brigadeiromistura');
+
+            const manteigapanela = document.getElementById('manteigapanela');
+            const chocolatepanela = document.getElementById('chocolatepanela');
+            const leiteconpanela = document.getElementById('leiteconpanela');
+
+            let ingredienteBrigadeiro = 0;
+            let segurandoObjeto = false;
+
+            let espatulaSelecionado = false;
+            let manteigaSelecionado = false;
+            let chocolateSelecionado = false;
+            let leiteconSelecionado = false;
+
+            let manteigaAdicionado = false;
+            let chocolateAdicionado = false;
+            let leiteconAdicionado = false;
+
+            let granuladoConcluido = false;
+            
+            // Desempenho
+            const scoreDisplay = document.getElementById('score-display');
+            const good = document.getElementById('good');
+            const great = document.getElementById('great');
+            const awesome = document.getElementById('awesome');
+
+
+            // CLIENTES E MESAS
+
+            const mesa1 = document.getElementById('mesa1')
+            const mesa2 = document.getElementById('mesa2')
+            const mesa3 = document.getElementById('mesa3')
+            const mesa1e = document.getElementById('mesa1-guardar')
+            const mesa2e = document.getElementById('mesa2-guardar')
+            const mesa3e = document.getElementById('mesa3-guardar')
+
+
+            // variável dos clientes
+            let client = [];
+            // dps de selecionados, os clientes saem do array client e entram no client clicado para serem depositados nas mesas, só sairão desse array dps de cozinhar para eles
+            let clientClicado = [];
+            const maxClients = 3;
+            let occupiedPositions = new Set();
+            // variável para passar os arrays de definições
+            let num = 0
+            // variael ana funcao dps cinte n poder ser clicado mais vezes e n poder mdá-lo de lugar mais vezes
+            let clienteBug = 0
+
+            // posição dos clientes esperando na entrada
+            // se a dimensão de um for 50px, a distância um do outro deverá ser maior que essa dimensão
+            // 3 clientes esperando por vez
+            // relação de camada entre eles. O mais da frente deverá ter um z-index maior
+            // 130, 70, 10
+            const clientPositions = {
+                1: 100,
+                2: 50,
+                3: 0
+            }
+            // estão se sobrepondo
+            const zclient = {
+                0: 3,
+                50: 4,
+                100: 5
+            }
+
+            // personagens
+            const clientImg = [
+                "aly.gif", //0
+                // "berimbal.gif", ///1
+                // "graal.gif", //2
+                "leandro.gif", //3
+                "marrye.gif", //4
+                "nox.gif", //5
+                "pariz.gif", //6
+                "pinguin.gif", //7
+                // "tiao-filho.gif" //8
+                "gigs.gif", //9
+                "coruja.gif", //10
+                "forg.gif" //11
+            ]
+
+
+            // array multidimensional com os sprites de cada um
+            // clientMesa[0][0] - sentado, [1] - pedindo, [2] - esperando
+            const clientMesa = [
+                ["aly-sentada.png", "aly-pedindo.png", "aly-esperando.png"], //0
+                // ["aly-sentada.png", "aly-pedindo.png", "aly-esperando.png"], //1
+                // ["aly-sentada.png", "aly-pedindo.png", "aly-esperando.png"], //2
+                ["leandro-sentado.png", "leandro-pedindo.png", "leandro-esperando.png"], //3
+                ["minhoca-sentada.png", "marrie-pedindo.png", "marrie-esperando-GIF.gif"], //4
+                ["NOX-SENTADO.png", "NOX-pedindo.png", "NOX-SENTADO.png"], //5
+                ["pariz-sentada.png", "pariz-pedindo.png", "pariz-esperando.png"], //6
+                ["chea-sentada.png", "chea-pedindo.png", "chea-esperando.png"], //7
+                // ["aly-sentada.png", "aly-pedindo.png", "aly-esperando.png"] //8
+                ["girgs-sentado.png", "girgs-pedindo.png", "girgs-sentado.png"], //9
+                ["coruja-sentada.png", "coruja-pedindo.png", "coruja-sentado.png"], //10
+                ["forg-sentado.png", "forg-pedindo.png", "forg-sentado.png"], //11
+
+            ]
+
+
+
+            // Variáveis
+            // ---------------------------------------------
+
+            // Movimentação
+            let endposition
+            let move = false             
+            let posX = 300; // posição inicial (meio)
+            let posY = 200;
+
+            // Jeca
+            let targetX = posX;
+
+            let targetY = posY;
+            const speed = 6; // velocidade do movimento
+
+            // Mesas
+            let mesa2Y = 1000;
+            let mesa3Y = 350;
+
+            // Misturar
+            let loop = 0;
+            let count = 0;
+            let pontosmistura = 0;
+            let variavelmistura = 100;
+            let variavelmistura2 = 0;
+            let variavelbarra = -800;
+
+
+            document.addEventListener("mousemove", (event) => {
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+
+                if (segurandoObjeto === true) {
+                    cursorhold.style.display = "inline"
+                    cursor.style.display = "none"
+                    cursorhold.style.top = (mouseY - cursorhold.height*0.3) + "px";
+                    cursorhold.style.left = (mouseX - cursorhold.width*0.3) + "px";
+                } else {
+                    cursor.style.display = "inline"
+                    cursorhold.style.display = "none"
+                    cursor.style.top = (mouseY - cursor.height*0.3) + "px";
+                    cursor.style.left = (mouseX - cursor.width*0.3) + "px";
+                }
+
+                if (manteigaSelecionado === true) {
+                    manteigaColher.style.display = "inline"
+                    manteigaColher.style.top = (mouseY - manteigaColher.height) + "px";
+                    manteigaColher.style.left = (mouseX - manteigaColher.width) - 40 + "px";
+                } else if (chocolateSelecionado === true) {
+                    chocolateColher.style.display = "inline"
+                    chocolateColher.style.top = (mouseY - chocolateColher.height) + "px";
+                    chocolateColher.style.left = (mouseX - chocolateColher.width) - 40 + "px";
+                } else if (leiteconSelecionado === true) {
+                    leitecon.style.top = (mouseY - leitecon.height) + "px";
+                    leitecon.style.left = (mouseX - leitecon.width) + "px";
+                } else if (espatulaSelecionado === true) {
+                    espatula.style.top = (mouseY - espatula.height) + 80 + "px";
+                    espatula.style.left = (mouseX - espatula.width) - 85 + "px";
+                }
+            });
+
+
+            // número do sprite
+            function selecionarNum() {
+                const numSprite = Math.floor(Math.random() * clientImg.length);
+                return numSprite;
+            }
+
+            function criarCliente() {
+
+                // definições para cada cliente
+                num++
+
+                let pos = clientPositions[num];
+                let z = zclient[pos];
+
+                occupiedPositions.add(pos);
+                console.log(occupiedPositions)
+
+                const clientDiv = document.createElement('img');
+                clientDiv.classList.add('cliente');
+                clientDiv.style.left = `${pos}px`;
+                clientDiv.style.zIndex = `${z}`;   
+
+
+                // Define o pedido do cliente
+                const possibleColors = ['red'];
+                let order = [];
+                // random recebe possible[numero]
+                const randomColor = possibleColors[Math.floor(Math.random() * possibleColors.length)];
+                // order recebe o que está dentro de random
+                order.push(randomColor);
+
+                // Define o sprite do personagem
+                // random recebe possible[numero]
+                console.log("escolhendo sprite...")
+                numSprite = selecionarNum()
+                console.log(`${numSprite}`)
+                const randomSprite = clientImg[numSprite];
+                console.log(`sprite escolhido ${randomSprite}`)
+                clientDiv.src = `img/${randomSprite}`; 
+                clientDiv.dataset.sprite = JSON.stringify(numSprite)
+
+
+                // guarda os dados do cliente no próprio elemento html
+                // <div data-order='{"item":"pizza","quantity":2}'></div> (exemplo)
+                clientDiv.dataset.order = JSON.stringify(order);
+                clientDiv.dataset.position = pos;
+                clientDiv.dataset.zindex = z;
+                // clientDiv.dataset.persona = 
+                console.log(clientDiv.dataset.order);
+
+                gameArea.appendChild(clientDiv);
+                client.push(clientDiv)
+
+
+                // sumir quando clicar e fazer as devidas mudanças para depois colocá-lo na mesa
+                clientDiv.addEventListener('click', () => {
+                    if (clientClicado.length > 0) {
+                        console.log("Já tem cliente clicado");
+                        return;
+                    }
+
+                    if (!clientClicado.includes(clientDiv)) {
+                        // esconde o cliente
+                        clientDiv.hidden = true;
+                        // libera a posição dele
+                        occupiedPositions.delete(pos);
+                        // adiciona no cliente clicado, e só poderá adicionar uma vez, para não poder clicar em mais de um cliente antes de colocar o outro em uma mesa
+                        clientClicado.push(clientDiv);
+                        console.log(`Acrescentado no array: ${clientClicado}`);
+
+                        mesaCliente() 
+                    }
+                });
+            }
+
+            // função que garante apenas 3 clientes e só cria outros 3 novos dps de eliminar os antigos 3
+            function clientes3() {
+
+                // reinicia a contagem
+                num = 0
+
+                let create = 0;
+                const interval = setInterval(() => {
+                if (create < maxClients || occupiedPositions == 0) {
+                    criarCliente();
+                    create++;
+                    console.log("criando mais um cliente")
+                } else {
+                    clearInterval(interval)
+                }
+                }, 500);
+            }
+
+            // ================================MESA + CLIENTE
+
+            function mesaCliente() {   
+                    mesa1.addEventListener("click", () => {
+                        if (clientClicado[0]) {
+                            // Se o elemento clicado (target) for um cliente já sentado, saia da função da mesa.
+                            // if (event.target.classList.contains("cliente-sentado")) {
+                            //         return; 
+                            // }
+                            
+                            if (mesa1e.querySelectorAll(".cliente").length >= 2) {
+                                console.log("Mesa cheia!")
+
+                            } else if (mesa1e.querySelector(".cliente")) {
+                                console.log("mais um cliente pra mesa 1")
+                                clientClicado[0].style.transform = "scaleX(-1)"
+                                clientClicado[0].style.width = "90px"
+                                clientClicado[0].style.height = "auto"
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa1e, "120px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+
+                                return
+                            } else {
+                                clientClicado[0].style.width = "90px"
+                                clientClicado[0].style.height = "auto"
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa1e, "-80px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+                            }
+
+                        }
+                    })
+
+                    mesa2.addEventListener("click", () => {
+                        if (clientClicado[0]) {
+                            // Se o elemento clicado (target) for um cliente já sentado, saia da função da mesa.
+                            // if (event.target.classList.contains("cliente-sentado")) {
+                            //         return; 
+                            // }
+                            
+                            if (mesa2e.querySelectorAll(".cliente").length >= 2) {
+                                console.log("Mesa cheia!")
+
+                            } else if (mesa2e.querySelector(".cliente")) {
+                                console.log("mais um cliente pra mesa 2")
+                                clientClicado[0].style.transform = "scaleX(-1)"
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa2e, "140px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+
+                                return
+                            } else {
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa2e, "-90px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+                            }
+
+                        }
+                    })
+
+                    mesa3.addEventListener("click", () => {
+                        if (clientClicado[0]) {
+                            // Se o elemento clicado (target) for um cliente já sentado, saia da função da mesa.
+                            // if (event.target.classList.contains("cliente-sentado")) {
+                            //     return; 
+                            // }
+                            
+                            if (mesa3e.querySelectorAll(".cliente").length >= 2) {
+                                console.log("Mesa cheia!")
+
+                            } else if (mesa3e.querySelector(".cliente")) {
+                                console.log("mais um cliente pra mesa 3")
+                                clientClicado[0].style.transform = "scaleX(-1)"
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa3e, "140px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+
+                                return
+                            } else {
+                                clientClicado[0].style.zIndex = "2"
+                                moverCliente(clientClicado[0], mesa3e, "-90px", "0px")
+                                mudarSprite(clientClicado[0])
+
+                                clientClicado = []
+                            }
+                        }
+                    })
+            }
+
+            function moverCliente(cliente, mesa, left, top) {
+                console.log(`movendo cliente ${mesa}`)
+
+                cliente.hidden = false;
+
+                mesa.appendChild(cliente)
+
+                cliente.style.position = "absolute";
+                cliente.style.left = left;
+                cliente.style.top = top;
+
+                // pega o spriteID guardado no elemento (dataset retorna string)
+                const spriteID = parseInt(cliente.dataset.sprite, 10);
+                if (Number.isNaN(spriteID)) {
+                    console.warn("spriteID inválido para o cliente:", cliente, cliente.dataset);
+                } else {
+                    cliente.src = `img/${clientMesa[spriteID][0]}`; // estado "sentado" por exemplo
+                }
+
+                // cliente.classList.add("cliente-sentado"); // ADICIONE esta classe para facilitar a identificação
+                // console.log("colocando a classe de sentado no cliente")
+            }  
+            
+            function mudarSprite(cliente) {
+                if (!cliente) {
+                    console.log("mudarSprite recebeu cliente inválido!")
+                    return;
+                }
+
+                console.log(`Mudando sprite do cliente: ${cliente}`)
+
+                const spriteID = parseInt(cliente.dataset.sprite, 10)
+
+                // evita múltipos intervalos
+                if (cliente._spriteIntervalId) {
+                    clearInterval(cliente._spriteIntervalId);
+                }
+
+                cliente._spriteIntervalId = setInterval(() => {
+                    cliente.src = `img/${clientMesa[spriteID][1]}`;
+                    // cliente.style.border = "2px solid black"
+                }, (Math.ceil(Math.random() * (10 - 5 + 1)) + 5) * 1000); 
+            }
+
+
+            // Atualiza posição do personagem a cada frame
+            function update() {
+
+                const dx = targetX - posX;
+                const dy = targetY - posY;
+                //calcula a diferença de distância a ser percorrida horizontalmente e verticamente utilizando o teorema de pitágoras
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // alterar velocidade junto com este
+                if (distance > 3) {
+                    move = true
+                    // console.log("movimentando")
+                    // console.log(distance)
+
+                    posX += (dx / distance) * speed;
+                    posY += (dy / distance) * speed;
+
+                    player.style.left = posX + "px";
+                    player.style.top = posY + "px";
+
+                } else if (distance <= 3 && move == true) {
+                    move = false
+                    
+                    if (endposition == "left") {
+                    player.src = "img/Jeca-paradoL.gif"
+                    }
+                    if (endposition == "right") {
+                    player.src = "img/Jeca-paradoR.gif"
+                    }
+
+                    console.log("fim do movimento")
+                    
+                }
+                requestAnimationFrame(update);
+            }
+
+
+            // Espátula para a mistura
+            espatula.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('espat', 'espatula'); // marca o item
+            });
+
+            espatula.addEventListener('click', (event) => {
+                if (espatulaSelecionado === false) {
+                    espatulaSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    espatulaSelecionado = false
+                    segurandoObjeto = false
+                }
+            });
+
+            manteiga.addEventListener('click', (event) => {
+                if (manteigaSelecionado === false && manteigaAdicionado === false) {
+                    manteigaSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    manteigaSelecionado = false
+                    segurandoObjeto = false
+                    manteigaColher.style.display = "none"
+                }
+            });
+
+            manteigaColher.addEventListener('click', (event) => {
+                if (manteigaSelecionado === false) {
+                    manteigaSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    manteigaSelecionado = false
+                    segurandoObjeto = false
+                }
+            });
+
+            chocolate.addEventListener('click', (event) => {
+                if (chocolateSelecionado === false && chocolateAdicionado === false) {
+                    chocolateSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    chocolateSelecionado = false
+                    segurandoObjeto = false
+                    chocolateColher.style.display = "none"
+                }
+            });
+
+            chocolateColher.addEventListener('click', (event) => {
+                if (chocolateSelecionado === false) {
+                    chocolateSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    chocolateSelecionado = false
+                    segurandoObjeto = false
+                }
+            });
+            
+            leitecon.addEventListener('click', (event) => {
+                if (leiteconSelecionado === false && leiteconAdicionado === false) {
+                    leiteconSelecionado = true
+                    segurandoObjeto = true
+                } else {
+                    leiteconSelecionado = false
+                    segurandoObjeto = false
+                }
+            });
+
+            // leitecon.addEventListener('click', (event) => {
+            //     if (leiteconSelecionado === false) {
+            //         leiteconSelecionado = true
+            //         kitchen.style.cursor = "url(img-/dedao.png), default";
+            //     } else {
+            //         leiteconSelecionado = false
+            //     }
+            // });
+
+
+            // Função da mistura
+            function misturar() {
+
+
+                
+                const leftetop = [
+                    { left: "80px", top: "0px" },
+                    { left: "80px", top: "220px" },
+                    { left: "200px", top: "120px" },
+                    { left: "-40px",  top: "120px" },
+                    { left: "160px", top: "200px" },
+                    { left: "160px", top: "50px" },
+                    { left: "10px",  top: "50px" },
+                    { left: "10px",  top: "200px" },
+                    { left: "80px", top: "130px" },
+                ];
+
+                for (let i = 0; i <= 8; i++) {
+                    const element = document.createElement("div");
+                    element.id = "target" + i;
+                    element.style.zIndex = "599999995999999959999999";
+                    element.dataset.target = 0;
+                    element.style.width = "120px";
+                    element.style.height = "120px";
+                    element.style.position = "absolute";
+                    element.style.left = `${leftetop[i].left}`;
+                    element.style.top = `${leftetop[i].top}`;
+                    element.style.borderRadius = "100px"
+                    // element.style.backgroundColor = "red"
+
+
+                    element.addEventListener('mouseover', (event) => {
+                    
+
+                    if (element.dataset.target === "0" && espatulaSelecionado === true && ingredienteBrigadeiro === 3) {
+                    // element.style.backgroundColor = "cyan"
+                        espatula.style.pointerEvents = "none";
+                        task4.pause();
+                        task4.currentTime = 1;
+                        task4.play();
+                        task4.currentTime = 0.7;
+                        
+                        element.dataset.target = "1";
+                        count = count + 1;
+
+                        // variavelbarra = variavelbarra + 6 + 2/3
+                        
+                        variavelmistura = variavelmistura - 1
+                        variavelmistura2 = variavelmistura2 + 1
+
+                        manteigapanela.style.opacity = variavelmistura + "%"
+                        chocolatepanela.style.opacity = variavelmistura + "%"
+                        leiteconpanela.style.opacity = variavelmistura + "%"
+
+                        brigadeiromistura.style.opacity = variavelmistura2 + "%"
+
+                        // barra.style.marginLeft = variavelbarra + "px"
+
+                        pontosmistura = pontosmistura+0.5
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 0.5*0.25;
+                        }, 300);
+
+                        pontosmistura = pontosmistura+1
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 1*0.25;
+                        }, 500);
+
+                        pontosmistura = pontosmistura+1.5
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 1.5*0.25;
+                        }, 700);
+
+                        pontosmistura = pontosmistura+2
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 2*0.25;
+                        }, 1000);
+
+                        pontosmistura = pontosmistura+5
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 5*0.25;
+                        }, 2000);
+
+                        pontosmistura = pontosmistura+7.5
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 7.5*0.25;
+                        }, 3000);
+
+                        pontosmistura = pontosmistura+10
+                        timer = setTimeout(() => {
+                        pontosmistura = pontosmistura - 10 *0.25;
+                        }, 5000);
+                        
+                        timer = setTimeout(() => {
+                            pontosmistura = pontosmistura - 7.5
+                        }, 10000) 
+
+                        timer = setTimeout(() => {
+                            pontosmistura = pontosmistura - 12.5
+                        }, 20000)
+
+                        timer = setTimeout(() => {
+                            pontosmistura = pontosmistura - 35
+                        }, 35000)
+
+
+                    
+
+                    if (count === 8) {
+                        loop = loop + 1;
+                        
+
+                        // seleciona todos os alvos
+                        const targets = document.querySelectorAll('[id^="target"]');
+                        targets.forEach(t => {
+                            t.dataset.target = "0";
+                            // t.style.backgroundColor = "cyan";
+                        });
+
+                        count = 0
+
+                    }
+
+                    if (loop === 15) {
+                        count = 0
+                        const targets = document.querySelectorAll('[id^="target"]');
+                        targets.forEach(t => {
+                            t.dataset.target = "1";
+                            // cancela o timeout
+                            clearTimeout(timer);
+                        });
+
+                        if (pontosmistura < 1400) {
+                            good.style.display = "inline"
+                            setTimeout(() => {
+                            good.style.display = "none"
+                            }, 3000);
+
+                        } else if (pontosmistura < 2200) {
+                            great.style.display = "inline"
+                            setTimeout(() => {
+                            great.style.display = "none"
+                            }, 3000);
+
+                        } else {
+                            awesome.style.display = "inline"
+                            setTimeout(() => {
+                            awesome.style.display = "none"
+                            }, 3000);
+                        }
+
+                        finish.play();
+                        cash.play();
+
+                        scoreDisplay.textContent = "Você conseguiu " + Math.floor(pontosmistura) + " pontos!";
+                        
+                        espatulaSelecionado = false
+
+                        // Espera 7,5 segundos para iniciar o minigame do brigadeiro
+                        setTimeout(() => {
+
+
+
+                            setTimeout(iniciarGranulado, 7500);
+
+                            leitecon.style.display = "none"
+                            manteiga.style.display = "none"
+                            chocolate.style.display = "none"
+                            panela.style.display = "none"
+                            panelaArea.style.display = "none"
+                            panelaFundo.style.display = "none"
+                            espatula.style.display = "none"
+                            brigadeiromistura.style.display = "none"
+
+                            brigadeiroMinigame = false;
+                            brigadeiroCaindoATM = true;
+                            brigadeiro.style.display = "none";
+
+                            objetos.forEach(o => o.remove());
+                            brigadeirosCaindo.forEach(b => b.remove());
+
+                        }, 7500);
+
+
+                    }
+
+                    }
+                    
+
+                    });
+
+                    panelaFundo.appendChild(element);
+                }
+            }
+
+            panelaArea.addEventListener('click', (event) => {
+                segurandoObjeto = false
+
+                if (manteigaSelecionado === true) {
+                    ingredienteBrigadeiro += 1
+                    manteigaSelecionado = false
+                    manteigaAdicionado = true
+                    manteigapanela.style.display = "inline"
+                    manteigaColher.style.display = "none"
+                }
+
+                if (chocolateSelecionado === true) {
+                    ingredienteBrigadeiro += 1
+                    chocolateSelecionado = false
+                    chocolateAdicionado = true
+                    chocolatepanela.style.display = "inline"
+                    chocolateColher.style.display = "none"
+                }
+
+                if (leiteconSelecionado === true) {
+                    ingredienteBrigadeiro += 1
+                    leiteconSelecionado = false
+                    leiteconAdicionado = true
+                    leiteconpanela.style.display = "inline"
+                    leitecon.style.display = "none"
+                }
+
+                if (ingredienteBrigadeiro === 3) {
+                    panelaArea.style.display = "none"
+                    brigadeiromistura.style.display = "inline"
+                    console.log("todos ingredientes adicionados")
+                }
+            });
+
+            // Detecta clique e define novo destino
+            gameArea.addEventListener('click', (event) => {
+                move = true
+                const rect = gameArea.getBoundingClientRect();
+                targetX = event.clientX - rect.left ; // centraliza no meio do quadrado. Metade dos px do quadrado 
+                targetY = event.clientY - rect.top - 70;
+            });
+
+            gameArea.addEventListener('click', (event) => {
+                const dx = targetX - posX;
+                const dy = targetY - posY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                console.log("animation")
+
+                if (targetX < posX) {
+                    player.src = "img/Jeca-correndoL.gif"
+                    endposition = "left"
+                } else {
+                    player.src = "img/Jeca-correndoR.gif"
+                    endposition = "right"
+                }
+            });
+
+            function visivel() {
+                if (kitchenopen === false) {
+                setTimeout(() => {
+                    container.style.display = "none";
+                    gameArea.style.display = "none";
+                }, 2000); // igual ao tempo da animação
+                kitchen.style.display = "flex";     // aparece
+
+                requestAnimationFrame(() => {
+                    kitchen.classList.add("animar"); // anima
+                });
+
+                kitchenopen = true
+                } 
+                else if (kitchenopen === true) {
+                container.style.display = "flex";
+                gameArea.style.display = "flex";
+                kitchen.classList.remove("animar"); // some suavemente
+                setTimeout(() => {
+                    kitchen.style.display = "none"; // depois de sumir
+                }, 2000); // igual ao tempo da animação
+
+                kitchenopen = false
+                }
+            }
+
+            botaocozinha.addEventListener('click', visivel);
+
+
+            update(); // inicia loop de animação
+            misturar(); // inicia o negocio de mistura
+            clientes3(); //cria os clientes e a lógica dos 3 clientes
+
+            /* ================== AQUI COMEÇA O SCRIPT DO index-mistura-p23.html (ADICIONADO INTEIRO, SEM ALTERAÇÕES) ================== */
+
+let brigadeiroMinigame = true;
+
+const brigadeiro = document.getElementById('brigadeiro');
+
+let objetos = [];
+let concluido = 0;
+let brigadeirosUsados = 0;
+let brigadeiroCaindoATM = true;
+let minigameBrigadeiroAtivo = false;
+
+
+let score = 0;
+let brigadeiroScore = 0;
+let granuladoScore = 0;
+
+let mouseX = 0;
+
+// barra
+const granBarContainer = document.getElementById("granBarContainer");
+const granBar = document.getElementById("granBar");
+
+function atualizarBarra() {
+    granBar.style.width = (granulosColetados / 500 * 100) + "%";
+}
+
+const scoreBrigEl = document.getElementById('scoreBrigadeiro');
+const scoreGranEl = document.getElementById('scoreGranulado');
+
+function updateHUD() {
+    scoreBrigEl.textContent = `Brigadeiro score: ${Math.round(brigadeiroScore)}`;
+    scoreGranEl.textContent = `Granulado score: ${Math.round(granuladoScore)}`;
+}
+
+
+/* ========== MOVIMENTO DO BRIGADEIRO ========== */
+
+document.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    if (brigadeiroMinigame) {
+        brigadeiro.style.left = (mouseX - brigadeiro.width * 0.4) + "px";
+    }
+});
+
+
+/* ========== CRIA AS 7 FORMAS ========== */
+let forminhasCriadas= false;
+function criarForminhas() {
+    if (forminhasCriadas) return;
+    forminhasCriadas = true;
+    for (let i = 0; i < 7; i++) {
+        let o = document.createElement("img");
+        o.classList.add("obj");
+        o.src = "img-ingrediente/Forminha.png";
+        o.id = "obj" + i;
+        o.style.top = "440px";
+        o.style.left = (-200 * i) + "px";
+        o.dataset.done = "0";
+        o.style.zIndex = "2";
+        o.style.display = "inline";
+        objetos.push(o);
+        cozinha.appendChild(o);
+    }
+}
+
+
+
+/* ========== MOVIMENTO DAS FORMAS ========== */
+
+function moverForma() {
+    if (!minigameBrigadeiroAtivo) return; // ← impede movimento antes da hora
+    objetos.forEach(obj => {
+        let x = parseFloat(obj.style.left);
+        x += 4;
+        if (x > window.innerWidth) x = -120;
+        obj.style.left = x + "px";
+    });
+    requestAnimationFrame(moverForma);
+}
+
+
+/* ========== BRIGADEIROS CAINDO ========== */
+
+let brigadeirosCaindo = [];
+
+function moverBrigadeiros() {
+    brigadeirosCaindo.forEach((brig, index) => {
+        let y = parseFloat(brig.style.top);
+        y += 9;
+
+        if (y > window.innerHeight) {
+            brig.remove();
+            brigadeirosCaindo.splice(index, 1);
+            return;
+        }
+        brig.style.top = y + "px";
+    });
+    requestAnimationFrame(moverBrigadeiros);
+}
+moverBrigadeiros();
+
+
+/* ========== CLICK → SOLTAR BRIGADEIRO ========== */
+
+document.addEventListener("click", (event) => {
+
+    if (brigadeiroCaindoATM === false) {
+
+        brigadeiroCaindoATM = true;
+        let mouseX = event.clientX;
+
+        let brigadeiroCaindo = document.createElement("img");
+        brigadeiroCaindo.classList.add("brig");
+        brigadeiroCaindo.src = "img-ingrediente/Brigadeiro-granulado.png";
+        brigadeiroCaindo.style.position = "absolute";
+        brigadeiroCaindo.style.height = "20%";
+
+        brigadeirosUsados++;
+
+        brigadeiroCaindo.style.left = (mouseX - 60) + "px";
+        brigadeiroCaindo.style.top = "-70px";
+
+        main.appendChild(brigadeiroCaindo);
+        brigadeirosCaindo.push(brigadeiroCaindo);
+
+        brigadeiro.style.display = "none";
+
+        setTimeout(() => {
+
+            let acertouForma = false;
+            let distanciaTotal = 0;
+
+            objetos.forEach(obj => {
+                if (obj.dataset.done === "1") return; // só considera forminhas não completas
+
+                let centroBrig = mouseX;
+                let centroForma = obj.getBoundingClientRect().left + obj.offsetWidth / 2;
+
+                let distancia = Math.abs(centroBrig - centroForma);
+
+                if (distancia < obj.offsetWidth * 0.45) {
+                    acertouForma = true;
+                    obj.dataset.done = "1";
+                    concluido++;
+                    distanciaTotal = distancia;
+
+                    // ✅ Brigadeiro segue a posição da forminha
+                    function seguirForminha() {
+                        if (!brigadeiroCaindo) return;
+                        const rect = obj.getBoundingClientRect();
+                        brigadeiroCaindo.style.left = (rect.left + rect.width / 2 - brigadeiroCaindo.offsetWidth / 2) + "px";
+                        brigadeiroCaindo.style.top = (rect.top - brigadeiroCaindo.offsetHeight / 2) + 75 + "px";
+                        requestAnimationFrame(seguirForminha);
+                    }
+
+                    seguirForminha();
+
+                    // remove da lista de brigadeiros que caem
+                    const index = brigadeirosCaindo.indexOf(brigadeiroCaindo);
+                    if (index > -1) brigadeirosCaindo.splice(index, 1);
+                }
+            });
+
+            brigadeiro.style.display = "inline";
+            brigadeiroCaindoATM = false;
+
+            if (acertouForma) {
+                score += (distanciaTotal ** 0.9) * 10;
+                brigadeiroScore += (distanciaTotal ** 0.9) * 10;
+            } else {
+                score -= distanciaTotal * 20;
+                brigadeiroScore -= distanciaTotal * 20;
+            }
+
+            updateHUD();
+
+            if (concluido === 7) {
+                brigadeiro.style.display = "inline";
+                brigadeiroMinigame = true;
+
+                brigadeiroCaindoATM = false;
+                minigameBrigadeiroAtivo = true;
+                iniciarBrigadeiroMinigame();
+            }
+
+        }, 1100);
+    }
+});
+
+
+
+/* ================== MINIGAME DO GRANULADO ================== */
+
+let pacote = document.getElementById("pacote");
+let tigela = document.getElementById("tigela");
+
+let granulos = [];
+let granulosColetados = 0;
+
+let pacoteX = 300;
+let pacoteVel = 3;
+let pacoteDir = 1;
+
+let granuladoAtivo = false; // ⚡ flag para controlar o minigame
+let pacoteInterval;          // ⚡ para poder parar o setInterval de velocidade
+
+function iniciarGranulado() {
+    granuladoAtivo = true; // ativa o minigame
+    pacote.style.display = "block";
+    tigela.style.display = "block";
+    granBarContainer.style.display = "block"; // mostra barra
+
+    moverPacote();
+    criarGranulos();
+}
+
+/* ========== MOVIMENTO DO PACOTE ========== */
+function moverPacote() {
+    // muda a velocidade a cada 2 segundos
+    pacoteInterval = setInterval(() => {
+        if (!granuladoAtivo) {
+            clearInterval(pacoteInterval);
+            return;
+        }
+        let mult = 0.2 + Math.random() * 3.8;
+        pacoteVel = 3 * mult;
+    }, 2000);
+
+    function anima() {
+        if (!granuladoAtivo) return;
+
+        pacoteX += pacoteVel * pacoteDir;
+        if (pacoteX < 0) pacoteDir = 1;
+        if (pacoteX > window.innerWidth - 160) pacoteDir = -1;
+
+        pacote.style.left = pacoteX - 50 + "px";
+        requestAnimationFrame(anima);
+    }
+
+    anima();
+}
+
+/* ========== CRIAÇÃO DE GRANULADOS ================== */
+function criarGranulos() {
+    function gerar() {
+        if (!granuladoAtivo) return;
+
+        let g = document.createElement("div");
+        g.classList.add("gran");
+
+        let px = pacoteX + 70 + Math.random() * 20 - 10;
+        g.style.left = px + "px";
+        g.style.top = "80px";
+        g.style.transform = "rotate(" + Math.ceil(Math.random() * 360) + "deg)";
+        g.dataset.vy = 3 + Math.random() * 2;
+        g.dataset.canCheck = "1";
+        g.style.zIndex = "999";
+
+        cozinha.appendChild(g);
+        granulos.push(g);
+
+        cair(g);
+    }
+
+    const interval = setInterval(() => {
+        if (!granuladoAtivo) {
+            clearInterval(interval);
+            return;
+        }
+        gerar();
+    }, 50);
+}
+
+/* ========== QUEDA + COLISÃO ================== */
+function cair(g) {
+    function anima() {
+        if (!granuladoAtivo || !g) return;
+
+        let y = parseFloat(g.style.top);
+        y += parseFloat(g.dataset.vy);
+        g.style.top = y + "px";
+
+        let gx = g.getBoundingClientRect().left;
+        let gy = g.getBoundingClientRect().top;
+        let tRect = tigela.getBoundingClientRect();
+
+        // colisão tigela
+        if (gx + 12 > tRect.left && gx < tRect.right && gy + 12 > tRect.top && gy < tRect.bottom) {
+            granulosColetados++;
+            atualizarBarra();
+            g.remove();
+
+            if (granulosColetados >= 500) finalizarGranulado();
+
+            return;
+        }
+
+        if (y > window.innerHeight) {
+            g.remove();
+            return;
+        }
+
+        requestAnimationFrame(anima);
+    }
+
+    anima();
+}
+
+/* ========== FINALIZAÇÃO ================== */
+function finalizarGranulado() {
+    granuladoAtivo = false;
+
+    // limpa todos os granulados da tela
+    granulos.forEach(g => g.remove());
+    granulos = [];
+
+    // esconde elementos do minigame
+    tigela.style.display = "none";
+    pacote.style.display = "none";
+
+    // aqui você pode chamar o próximo minigame ou ações pós-granulado
+    setTimeout(() => {
+        brigadeiro.style.display = "inline";
+        brigadeiroMinigame = true;
+        brigadeiroCaindoATM = false;
+        minigameBrigadeiroAtivo = true;
+
+        iniciarBrigadeiroMinigame();
+        criarForminhas();
+        moverForma();
+    }, 7500);
+}
+
+/* ========== TIGELA SEGUE O MOUSE ================== */
+document.addEventListener("mousemove", (ev) => {
+    if (!granuladoAtivo) return;
+    tigela.style.left = (ev.clientX - 60) + "px";
+    // não precisa de check secundário se usamos o check na colisão direta
+});
+
+
+/* ========== CHECK SECUNDÁRIO (mantido) ========== */
+
+function checkGranulo(hora) {
+
+    if (hora !== ultimoMovimentoHora) return;
+
+    granulos.forEach((g, i) => {
+
+        if (!g || g.dataset.canCheck === "0") return;
+
+        let gx = g.getBoundingClientRect().left;
+        let tx = tigela.getBoundingClientRect().left;
+
+        let dist = Math.abs(gx - tx);
+
+        if (dist < 100) {
+            score += 3;
+            granuladoScore += 3;
+            granulosColetados++;
+
+            atualizarBarra();
+
+            if (granulosColetados >= 500) finalizarGranulado();
+
+            g.remove();
+            granulos[i] = null;
+
+        } else {
+            score -= 1;
+            granuladoScore -= 1;
+        }
+
+        g.dataset.canCheck = "0";
+    });
+
+    granulos = granulos.filter(g => g !== null);
+
+    updateHUD();
+}
+
+            /* ================== FIM do script adicionado do arquivo 2 ================== */
+function iniciarBrigadeiroMinigame() {
+    brigadeiro.style.display = "inline";
+    brigadeiroMinigame = true;
+}
+
+
+</script>
+</body>
+</html>
