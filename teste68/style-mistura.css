@@ -26,57 +26,6 @@ main {
 
 /* =========================================================================================================================================================================================================================================================================================================================================================================HEADER */
 
-/* header { */
-  /* display: flex;
-  justify-content: space-between;
-  align-items: center; */
-  /* background-color: rgba(243, 216, 106, 0.85); */
-  /* box-shadow: 0 3px 6px rgba(0,0,0,0.1); */
-  /* margin-bottom: 15px; */
-/* } */
-
-/* Logo (ícone + nome) */
-/* header .log {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-} */
-
-/* header .log h2 {
-  font-size: 35px;
-  margin: 0;
-}
-
-header .log h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-} */
-
-/* Navegação */
-/* nav {
-  display: flex;
-  gap: 20px;
-} */
-
-/* nav button {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: none;
-  background: #ffac40a9;
-  cursor: pointer;
-  font-size: 25px;
-  transition: all 0.2s ease;
-} */
-
-/* nav button:hover {
-  background-color: #f6910d;
-  transform: scale(1.05);
-} */
-
-/* nav button:active {
-  transform: scale(0.97);
-} */
 
 header {
   display: flex;
@@ -179,13 +128,6 @@ nav button:active {
 
 /*====================================================================================================================================================================================================================================================================================================================================================================GAME AREA*/
 
-/* #QUADRADO{
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  background-size: cover;
-  background-color: aquamarine;
-} */
 
 #game-area {
   width: 80%; 
@@ -195,6 +137,8 @@ nav button:active {
   margin: 0 auto;
   position: relative; /* necessário para o player absoluto */
   overflow: hidden;
+
+  background-image: url(img-cenario/fundo.png);
 }
 
 .fundo {
@@ -204,7 +148,7 @@ nav button:active {
 
 #game-area img {
   max-width: 100%;
-  max-height: 580px;
+  /* max-height: 580px; */
   border-radius: 10px;
 }
 
