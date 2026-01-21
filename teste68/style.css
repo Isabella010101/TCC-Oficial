@@ -160,6 +160,12 @@ nav button:active {
   top: 100px;
 }
 
+#container {
+  /* width: 100vw;
+  height: 90vh; */
+  position: relative;
+}
+
 /* geral pro cliente em cada mesa */
 .mesa-guardar .cliente {
   display: block;
@@ -177,8 +183,8 @@ nav button:active {
 
 /* div de cada mesa e seu respectivo cliente */
 #mesa1-guardar {
-  left: 360px;
-  top: 135px;
+  /* left: 360px; */
+  top: 30%;
 
   z-index: 3;
 }
@@ -188,8 +194,8 @@ nav button:active {
 }
 
 #mesa2-guardar {
-  left: 320px;
-  top: 350px;
+  /* left: 320px; */
+  top: 70%;
 
   z-index: 8;
 }
@@ -199,8 +205,8 @@ nav button:active {
 }
 
 #mesa3-guardar {
-  left: 750px;
-  top: 350px;
+  left: 390px;
+  top: 70%;
 
   z-index: 8;
 }
@@ -251,7 +257,6 @@ nav button:active {
 
 #game-area img {
   max-width: 100%;
-  /* max-height: 580px; */
   border-radius: 10px;
 }
 
@@ -263,8 +268,8 @@ nav button:active {
 
   height: 23%;
   
-  left: 250px;
-  top: 100px;
+  /* left: 250px; */
+  top: 7%;
 }
 
 
@@ -283,41 +288,6 @@ nav button:active {
   -webkit-user-drag: auto ;
 }
 
-
-/* imagem das mesas e o comprimento */
-/* #mesa1 {
-  height: auto;
-  width: 145px;
-  z-index: 2
-}
-
-#mesa2 {
-  height: auto;
-  width: 150px;
-  z-index: 5;
-}
-
-#mesa3 {
-  height: auto;
-  width: 150px;
-  z-index: 5;
-} */
-
-
-/* #parede {
-  
-  height: 30vh;
-  width: 100vw;
-  z-index: 999;
-}
-
-#parede2 {
- 
-  height: 46vh;
-  width: 45vw;
-  left: 50vw;
-  z-index: 999;
-} */
 
 #chao {
   /* background-color: green; */

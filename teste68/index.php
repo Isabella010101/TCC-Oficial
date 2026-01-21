@@ -101,6 +101,8 @@ $nomeUsuario = isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Visitante';
         <div id="game-area">
             <img src="img/Jeca-paradoR.gif" id="player" class="player" alt="Player">
             <img src="img-cenario/fundo.png" alt="fundo" class="fundo">
+
+            
         </div>
     </main>
 
